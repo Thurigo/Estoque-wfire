@@ -2,9 +2,9 @@
 
 const { deepStrictEqual } = require('assert');
 const express = require('express');
-const app = express() 
+const app = express()
 app.use(express.json());
-const port = 3000 
+const port = 3000
 
 
 const path = require('path');
@@ -27,7 +27,7 @@ const pool = new Pool({
 
 
 
-app.post('/cadastrar', async (req, res)=> {
+app.post('/cadastrar', async (req, res) => {
     const {
         serial,
         modelo,
@@ -35,8 +35,8 @@ app.post('/cadastrar', async (req, res)=> {
         estado,
         valor,
         descricao
-    } =  req.body;
-    
+    } = req.body;
+
     console.log('Dados recebidos:', { serial, modelo, quantidade, estado, valor, descricao });
 
 
@@ -58,6 +58,83 @@ app.post('/cadastrar', async (req, res)=> {
         }
     }
 })
+
+
+
+
+
+
+app.get('/pesquisar', async (req, res) => {
+    const {
+        serial,
+        modelo,
+        quantidade,
+        estado,
+        valor,
+        descricao
+    } = req.query;
+
+    const filters = [];
+    const values = [];
+
+    let index = 1; 
+
+    if (serial) {
+        filters.push(`serial = $${index}`);
+        values.push(serial);
+        index++;
+    }
+    if (modelo) {
+        filters.push(`modelo = $${index}`);
+        values.push(modelo);
+        index++;
+    }
+    if (quantidade) {
+        filters.push(`quantidade = $${index}`);
+        values.push(quantidade);
+        index++;
+    }
+    if (estado) {
+        filters.push(`estado = $${index}`);
+        values.push(estado);
+        index++;
+    }
+    if (valor) {
+        filters.push(`valor = $${index}`);
+        values.push(valor);
+        index++;
+    }
+    if (descricao) {
+        filters.push(`descricao = $${index}`);
+        values.push(descricao);
+        index++;
+    }
+
+    // Montar a consulta final
+    const query = `SELECT * FROM roteadores WHERE ${filters.join(' AND ')}`;
+
+    const client = await pool.connect();
+
+    try {
+        const result = await client.query(query, values);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao processar a solicitação');
+    } finally {
+        client.release();
+    }
+});
+
+
+
+
+
+
+
+
+
+
 
 
 
