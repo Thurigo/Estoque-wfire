@@ -4,7 +4,7 @@ const { deepStrictEqual } = require('assert');
 const express = require('express');
 const app = express()
 app.use(express.json());
-const port = 3000
+const port = 3001
 
 
 const path = require('path');
@@ -44,7 +44,7 @@ app.post('/cadastrar', async (req, res) => {
 
 
     try {
-        const insertQuery = 'INSERT INTO aps (serial, modelo, quantidade, esto, valor, descricao) VALUES ($1, $2, $3, $4, $5, $6)';
+        const insertQuery = 'INSERT INTO aps (serial, modelo, quantidade, estado, valor, descricao) VALUES ($1, $2, $3, $4, $5, $6)';
         const values = [serial, modelo, quantidade, estado, valor, descricao];
         await pool.query(insertQuery, values);
         console.log('Dados adicionados com sucesso!');
@@ -126,6 +126,12 @@ app.get('/pesquisar', async (req, res) => {
     }
 });
 
+
+
+
+
+
+//-------------------Atualizar
 app.put('/atualizar/:id', async (req, res) => {
     const itemId = req.params.id;
 

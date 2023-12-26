@@ -126,6 +126,13 @@ app.get('/pesquisar', async (req, res) => {
     }
 });
 
+
+
+
+
+
+//-------------------Atualizar
+
 app.put('/atualizar/:id', async (req, res) => {
     const itemId = req.params.id;
 
